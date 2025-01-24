@@ -26,6 +26,11 @@ app.get('/',(req,res)=>{
     res.send("FETCH  SUCCESSFULLY AND API CALL SUCCESSFULLY")
     
 })
+app.get('/about',(req,res)=>{
+    console.log('FETCH  SUCCESSFULLY about');
+    res.send("FETCH  SUCCESSFULLY AND API CALL SUCCESSFULLY about")
+    
+})
 
 app.listen(PORT,()=>{
     console.log('SERVER IS RUNNING ON PORT ',PORT);
