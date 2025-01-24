@@ -3,6 +3,9 @@ import morgan from 'morgan'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import dotenv from "dotenv";
+import authRoutes from './routers/auth.js'
+
+
 const app = express()
 const PORT = 4000
 
@@ -31,6 +34,7 @@ app.get('/about',(req,res)=>{
     res.send("FETCH  SUCCESSFULLY AND API CALL SUCCESSFULLY about")
     
 })
+app.use('/auth',authRoutes)
 
 app.listen(PORT,()=>{
     console.log('SERVER IS RUNNING ON PORT ',PORT);
