@@ -14,7 +14,10 @@ app.use(cors())
 app.use(express.json())
 app.use(cors('*'))
 
-dotenv.config()
+dotenv.config({ path: 'config.env' });
+
+console.log("auth secret", process.env.Auth_SECERET); // Variables are now loaded from `config.env`
+
 
 mongoose.connect(process.env.MONGODB_URI)
 .then(()=>console.log('MONGODB CONNECTED SUCCESSFULLY')
