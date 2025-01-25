@@ -3,7 +3,7 @@ import express from 'express'
 import Joi from 'joi'
 import sendResponse from '../helpers/response.js';
 import User from '../models/user.js';
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 const router = express.Router()
 
