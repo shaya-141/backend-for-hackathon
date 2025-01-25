@@ -25,7 +25,7 @@ mongoose.connect(process.env.MONGODB_URI)
 
 
 app.get('/',(req,res)=>{
-    console.log('FETCH  SUCCESSFULLY');
+    console.log('FETCH  SUCCESSFULLY AND');
     res.send("FETCH  SUCCESSFULLY AND API CALL SUCCESSFULLY")
     
 })
