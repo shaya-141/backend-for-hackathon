@@ -29,8 +29,8 @@ app.get('/',(req,res)=>{
     res.send("FETCH  SUCCESSFULLY AND API CALL SUCCESSFULLY")
     
 })
-app.get('/about',(req,res)=>{
-    console.log('FETCH  SUCCESSFULLY about');
+app.get('/check',(req,res)=>{
+    console.log('check  SUCCESSFULLY api');
     res.send("FETCH  SUCCESSFULLY AND API CALL SUCCESSFULLY about")
     
 })
