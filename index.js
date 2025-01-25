@@ -34,7 +34,7 @@ app.get('/',(req,res)=>{
 })
 app.get('/check',(req,res)=>{
     console.log('check  SUCCESSFULLY api');
-    res.send("FETCH  SUCCESSFULLY AND API CALL SUCCESSFULLY about")
+    res.send("FETCH  SUCCESSFULLY AND API CALL SUCCESSFULLY CHECK")
     
 })
 app.use('/auth',authRoutes)
