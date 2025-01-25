@@ -19,18 +19,17 @@ function generateToken() {
 router.post('/register', async (req, res) => {
     const { cnic, address, name, contact, purpose, department } = req.body;
 
-    let uniquetoken = generateToken(); // Start with a generated token
+    let uniquetoken = generateToken(); 
 
-    // Check if the generated token already exists in the database
+    
     const userDetail = await User.findOne({ cnic });
     const findToken = await User.findOne({ token: uniquetoken });
 
-    // If token exists, generate a new unique token
+   
     if (findToken) {
         uniquetoken = generateToken();
     }
 
-    // Create new user and save it
     const newUser = new User({
         name: name,
         address: address,
@@ -51,7 +50,7 @@ router.post('/register', async (req, res) => {
 
 router.get('/detailtoken', async (req, res) => {
     try {
-      const { token } = req.query;  // Get the token from query parameters
+      const { token } = req.query;  
       if (!token) {
         return sendResponse(res, 400, null, "Token is required");
       }
@@ -68,8 +67,54 @@ router.get('/detailtoken', async (req, res) => {
       return sendResponse(res, 500, null, "An error occurred while fetching token details");
     }
   });
-  
 
+  router.put('/updatetoken', async (req, res) => {
+    try {
+        const { token } = req.query;
+        const status = "approve";
+
+        // Use findOneAndUpdate to update and return the updated document
+        const updatedUser = await User.updateOne({ token }, { $set: {status} })
+
+        
+        return sendResponse(res, 200, updatedUser, "User updated successfully");
+
+
+    } catch (error) {
+        console.error("Error in updating token details:", error);
+        return sendResponse(res, 500, null, "An error occurred while updating token details");
+    }
+});
+
+
+
+
+
+  router.delete('/deletetoken', async (req, res) => {
+
+    try {
+      const { token } = req.query; 
+  
+      if (!token) {
+        return res.status(400).json({ message: 'Token is required' });
+      }
+  
+      const deletedToken = await User.findOneAndDelete({ token: token });
+  
+      
+      if (!deletedToken) {
+        return sendResponse(res,400,null,"Token not found")
+      }
+  
+      return sendResponse(res,200,null,"Token deleted successfully")
+      
+    } catch (error) {
+      console.error('Error deleting token:', error);
+      sendResponse(res,400,null,"An error occurred while deleting token details",error)
+      return
+    }
+  });
+  
 
 
 export default router;
