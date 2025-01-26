@@ -5,11 +5,22 @@ import User from '../models/user.js';
 import bcrypt from "bcryptjs";
 import crypto from 'crypto';
 import jwt from "jsonwebtoken";
+import UserType from '../models/userType.js';
+import bcryptjs from 'bcryptjs';
+import req from 'express/lib/request.js';
+import { authenticatUser } from '../middleware/authenticateUser.js';
 
 const router = express.Router();
 
-// Login Schema
-
+const addUserSchema = Joi.object({
+    email: Joi.string().email({
+        minDomainSegments: 2,
+        tlds: { allow: ["com", "net", "org", "edu"] },
+      }),
+    password: Joi.string().min(6).required(),
+    role: Joi.string().valid("receptionist", "manager","admin").required(),
+    
+  });
 
 // Generate a Unique Token Function
 function generateToken() {
@@ -87,6 +98,87 @@ router.get('/detailtoken', async (req, res) => {
         return sendResponse(res, 500, null, "An error occurred while updating token details");
     }
 });
+
+router.post('/login', async (req, res) => {
+    
+  const {email,password} = req.body
+    const user = await UserType.findOne({ email }).lean();
+    if (!user) return sendResponse(res, 400, null, 'User not found');
+  
+    // Await bcrypt.compare() for password validation
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) return sendResponse(res, 400, null, 'Invalid password');
+  
+    // Sign the JWT with the plain user object
+    const token = jwt.sign({ id: user._id, email: user.email }, process.env.Auth_SECERET,{
+      expiresIn: "30d", // 30 din ka expiry time
+    });
+  
+    // Send the response, making sure the user is plain (no circular references)
+    sendResponse(res, 200, { user, token }, 'User logged in successfully');
+
+
+
+    return
+
+
+  });
+
+  router.get('/userDetail', async (req, res) => {
+    try {
+      const { email } = req.query;  // Extract the id from query parameters
+      console.log("email",email);
+    
+      // Check if the ID is provided
+      if (!email) {
+        return sendResponse(res, 400, null, "email is required");
+      }
+  
+      const userDetail = await UserType.findOne({ email: email });  // Find user by ID
+  
+      if (!userDetail) {
+        return sendResponse(res, 404, null, "User not found");
+      }
+  
+      return sendResponse(res, 200, userDetail, "User detail fetched successfully");
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      return sendResponse(res, 500, null, "An error occurred while fetching user details");
+    }
+  });
+  
+
+  router.post('/addUser',async (req,res)=>{
+    const {error,value} = addUserSchema.validate(req.body)
+
+    if(error) return sendResponse(res,400,null,error.message)
+        
+    const email = req.body.email.toLowerCase();
+    const user = await UserType.findOne({email})
+    console.log("user",user);
+    
+    if(user){
+         return sendResponse(res,400,null,'User already exist')
+        
+        }
+    
+    const hashPassword = bcryptjs.hashSync(req.body.password,10)
+
+    const newUser = UserType({
+        email:email,
+        password:hashPassword,
+        role:req.body.role
+
+    })
+    await newUser.save()
+  
+
+    console.log("newUser for register",newUser);
+    sendResponse(res,200,newUser,'User created successfully')
+    
+    return
+
+})
 
 
 
