@@ -72,6 +72,8 @@ router.get('/detailtoken', async (req, res) => {
     try {
         const { token } = req.query;
         const status = "approve";
+        console.log("token",token);
+        
 
         // Use findOneAndUpdate to update and return the updated document
         const updatedUser = await User.updateOne({ token }, { $set: {status} })
